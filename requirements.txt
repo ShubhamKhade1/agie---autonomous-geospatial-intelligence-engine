@@ -1,0 +1,41 @@
+# Requirements for AGIE
+
+# Geospatial & Data Handling
+numpy
+pandas
+geopandas
+xarray
+rioxarray
+rasterio
+shapely
+h3
+
+# Ingestion APIs
+sentinelsat
+copernicusmarine
+earthaccess
+sentinelhub
+
+# ML & Temporal Modeling
+scikit-learn
+statsmodels
+darts
+pytorch-forecasting
+torch
+torchvision
+
+# Explainability & AI
+shap
+lime
+google-generativeai
+
+# Backend Infrastructure
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+celery
+redis
+python-dotenv
+pydantic
+pydantic-settings

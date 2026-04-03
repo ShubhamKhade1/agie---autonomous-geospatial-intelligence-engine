@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agie-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: agie-api
+  template:
+    metadata:
+      labels:
+        app: agie-api
+    spec:
+      containers:
+      - name: agie-api
+        image: ghcr.io/${GITHUB_REPOSITORY}/agie-api:latest
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - secretRef:
+            name: agie-secrets
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agie-api-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: agie-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agie-worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: agie-worker
+  template:
+    metadata:
+      labels:
+        app: agie-worker
+    spec:
+      containers:
+      - name: agie-worker
+        image: ghcr.io/${GITHUB_REPOSITORY}/agie-api:latest
+        command: ["celery", "-A", "src.workers.tasks", "worker", "--loglevel=info"]
+        envFrom:
+        - secretRef:
+            name: agie-secrets
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+spec:
+  selector:
+    app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
