@@ -28,9 +28,16 @@ jobs:
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io
     steps:
     - uses: actions/checkout@v3
-    
+
+    - name: Set lowercase image tags (GHCR requires lowercase)
+      run: |
+        echo "IMAGE_API=${REGISTRY}/${GITHUB_REPOSITORY,,}/airavat-api:latest" >> $GITHUB_ENV
+        echo "IMAGE_FRONTEND=${REGISTRY}/${GITHUB_REPOSITORY,,}/airavat-frontend:latest" >> $GITHUB_ENV
+
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v2
       with:
@@ -44,7 +51,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository }}/airavat-api:latest
+        tags: ${{ env.IMAGE_API }}
 
     - name: Build and push Frontend image
       uses: docker/build-push-action@v4
@@ -52,4 +59,4 @@ jobs:
         context: ./frontend
         file: ./frontend/Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository }}/airavat-frontend:latest
+        tags: ${{ env.IMAGE_FRONTEND }}
