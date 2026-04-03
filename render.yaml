@@ -32,14 +32,6 @@ services:
           property: connectionString
       - key: GOOGLE_API_KEY
         sync: false
-      - key: EARTHDATA_USERNAME
-        sync: false
-      - key: EARTHDATA_PASSWORD
-        sync: false
-      - key: COPERNICUS_USERNAME
-        sync: false
-      - key: COPERNICUS_PASSWORD
-        sync: false
       - key: PORT
         value: 10000
 
@@ -60,16 +52,6 @@ services:
           type: redis
           name: agie-redis
           property: connectionString
-      - key: GOOGLE_API_KEY
-        sync: false
-      - key: EARTHDATA_USERNAME
-        sync: false
-      - key: EARTHDATA_PASSWORD
-        sync: false
-      - key: COPERNICUS_USERNAME
-        sync: false
-      - key: COPERNICUS_PASSWORD
-        sync: false
 
   # 5. React Frontend (Static Site)
   - type: web
@@ -77,6 +59,10 @@ services:
     runtime: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
+    envVars:
+      # Public API URL baked into the Vite build (must match your agie-api service URL on Render).
+      - key: VITE_API_URL
+        value: https://agie-api.onrender.com
     routes:
       - type: rewrite
         source: /*

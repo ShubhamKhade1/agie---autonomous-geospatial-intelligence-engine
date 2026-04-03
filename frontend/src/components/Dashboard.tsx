@@ -20,6 +20,8 @@ import {
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
+
 // Mock Data
 const signalData = [
   { time: '00:00', magnitude: 45, baseline: 40 },
@@ -86,7 +88,7 @@ const Dashboard = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/dialogue', {
+      const response = await fetch(`${API_BASE}/dialogue`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, roi_id: 'mumbai_coast' })
@@ -130,8 +132,8 @@ const Dashboard = () => {
           <button 
             onClick={async () => {
               setIsLoading(true);
-              await fetch('http://localhost:8000/simulation/inject', { method: 'POST' });
-              const res = await fetch('http://localhost:8000/anomalies/status');
+              await fetch(`${API_BASE}/simulation/inject`, { method: 'POST' });
+              const res = await fetch(`${API_BASE}/anomalies/status`);
               const data = await res.json();
               setPriorityData({ score: data.priority, roi: data.roi });
               setReport(prev => ({ ...prev, findings: data.status }));
